@@ -20,20 +20,20 @@ public class CustomerController {
     }
 
     @GetMapping({"/{customerId}"})
-    public ResponseEntity<CustomerDto> getCustomer(@PathVariable UUID customerId) {
+    public ResponseEntity<CustomerDto> getCustomer(@PathVariable("customerId") UUID customerId) {
 
         return new ResponseEntity<>(customerService.getCustomerById(customerId), HttpStatus.OK);
     }
 
     @PostMapping  // POST - create new customer
-    public ResponseEntity<CustomerDto> handlePost(@RequestBody CustomerDto customerDto) {
+    public ResponseEntity handlePost(@RequestBody CustomerDto customerDto) {
         CustomerDto savedDto = customerService.saveNewCustomer(customerDto);
 
         HttpHeaders headers = new HttpHeaders();
         //todo add hostname to url
-        headers.add("Location", "/api/v1/customer" + savedDto.getId());
+        headers.add("Location", "/api/v1/customer" + savedDto.getId().toString());
 
-        return new ResponseEntity<>(headers, HttpStatus.CREATED);
+        return new ResponseEntity(headers, HttpStatus.CREATED);
     }
 
     @PutMapping({"/{customerId}"})

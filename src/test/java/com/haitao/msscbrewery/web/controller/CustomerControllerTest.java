@@ -14,20 +14,16 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.UUID;
 
-import static org.assertj.core.internal.bytebuddy.matcher.ElementMatchers.is;
+import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.mock.http.server.reactive.MockServerHttpRequest.put;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest
+@WebMvcTest(CustomerController.class)
 public class CustomerControllerTest {
 
     @MockBean
@@ -42,7 +38,7 @@ public class CustomerControllerTest {
     CustomerDto validCustomer;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp()  {
         validCustomer = CustomerDto.builder().id(UUID.randomUUID())
                 .name("Bill Gate")
                 .build();
@@ -52,7 +48,7 @@ public class CustomerControllerTest {
     public void getCustomer() throws Exception{
         given(customerService.getCustomerById(any(UUID.class))).willReturn(validCustomer);
 
-        mockMvc.perform(get("/api/v1/customer/" + validCustomer.getId()).accept(APPLICATION_JSON))
+        mockMvc.perform(get("/api/v1/customer/" + validCustomer.getId().toString()).accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
                 .andExpect(jsonPath("$.id", is(validCustomer.getId().toString())))
@@ -83,14 +79,16 @@ public class CustomerControllerTest {
         String customerDtoJson = objectMapper.writeValueAsString(customerDto);
 
         //when
-        mockMvc.perform(put("api/v1/customer/" + validCustomer.getId())
-                .contentType(APPLICATION_JSON).content(customerDtoJson))
+        mockMvc.perform(put("/api/v1/customer/" + validCustomer.getId().toString())
+                .contentType(APPLICATION_JSON)
+                .content(customerDtoJson)
+        )
                 .andExpect(status().isNoContent());
 
         then(customerService).should().updateCustomer(any(), any());
     }
 
-    @Test
-    public void deleteCustomer() {
-    }
+//    @Test
+//    public void deleteCustomer() {
+//    }
 }

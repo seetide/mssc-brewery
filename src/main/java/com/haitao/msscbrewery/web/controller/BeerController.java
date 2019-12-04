@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+@Deprecated
 @RequestMapping("/api/v1/beer")
 @RestController
 public class BeerController {
@@ -27,7 +28,7 @@ public class BeerController {
     }
 
     @PostMapping  // POST - create new beer
-    public ResponseEntity<BeerDto> handlePost(@RequestBody BeerDto beerDto) {
+    public ResponseEntity handlePost(@RequestBody BeerDto beerDto) {
         BeerDto savedDto = beerService.saveNewBeer(beerDto);
 
         HttpHeaders headers = new HttpHeaders();
@@ -48,6 +49,6 @@ public class BeerController {
     @DeleteMapping({"/{beerId"})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteBeer(@PathVariable("beerId") UUID beerId){
-        beerService.deletById(beerId);
+        beerService.deleteById(beerId);
     }
 }

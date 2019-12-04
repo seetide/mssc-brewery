@@ -9,7 +9,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -51,7 +50,6 @@ public class BeerControllerTest {
     public void getBeer() throws Exception{
         given(beerService.getBeerById(any(UUID.class))).willReturn(validBeer);
 
-        //noinspection deprecation
         mockMvc.perform(get("/api/v1/beer/" + validBeer.getId().toString()).accept(APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(APPLICATION_JSON))
@@ -82,7 +80,7 @@ public class BeerControllerTest {
         String beerDtoJson = objectMapper.writeValueAsString(beerDto);
         
         //when
-        mockMvc.perform(put("/api/v1/beer/" + validBeer.getId())
+        mockMvc.perform(put("/api/v1/beer/" + validBeer.getId().toString())
                 .contentType(APPLICATION_JSON)
                 .content(beerDtoJson))
                 .andExpect(status().isNoContent());    
